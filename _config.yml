@@ -1,0 +1,13 @@
+title:
+author:
+  name: Roland Starke
+
+show_excerpts: false # set to true to show excerpts on the homepage
+
+collections:
+  posts:
+    permalink: /blog/:title/
+
+plugins:
+ - jekyll-feed
+ - jekyll-seo-tag

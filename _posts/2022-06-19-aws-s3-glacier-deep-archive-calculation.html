@@ -1,0 +1,56 @@
+---
+layout: post
+title: How much does it cost to save 1 TB in Amazon S3 Glacier Deep Archive for 10 Years?
+description: Complete calculation of a sample use case using AWS.
+head: >
+  <script src="/assets/js/storage-cloud-calculator.js" defer></script>
+  <script src="/assets/js/vendor/8.0.7_filesize.min.js" defer></script>
+  <script src="/assets/js/vendor/3.10.2_alpinejs.min.js" defer></script>
+  <style>
+    .calculation_bar {
+      display: inline-block;
+      height: 1em;
+      vertical-align: sub;
+    }
+  </style>
+
+---
+
+
+<div x-data="storageApp({resultToDisplay: 'aws-s3-glacier-deep-archive'})">
+
+  <template x-if="resultShown">
+    <div>
+      <p>It costs <span x-text="formatPriceUnprecise(resultShown.costs.total)"></span> asuming an
+        average filesize
+        of <span x-text="formatGb(input.filesizeInGb)"></span> and
+        that you recover the data <span x-text="input.recovers === '1' ? 'once' : input.recovers + ' times'"></span>.
+      </p>
+      <h2>Price calculation</h2>
+      <div>
+        <div x-html="resultShown.costs.calculationHTML"></div>
+      </div>
+    </div>
+  </template>
+
+  <h2>Price Comparison between Cloud Storage Providers</h2>
+  <div style="overflow-x: auto;">
+    <table style="display:table;">
+      <tr>
+        <th colspan="2">Offer</th>
+        <th>Cost</th>
+      </tr>
+      <template x-for="result in results">
+        <tr>
+          <td align="center"><img :src="'/assets/images/cloud-providers/' + result.offer.image" :alt="result.offer.altText" height="40" /></td>
+          <td x-text="result.offer.name"></td>
+          <td style="position: relative;">
+            <span x-text="formatPriceUnprecise(result.costs.total)"></span><br>
+          </td>
+        </tr>
+      </template>
+    </table>
+
+    Check out the <a href="{% link tools/storage-cost-calculator/index.html %}">calculator</a>.
+  </div>
+</div>

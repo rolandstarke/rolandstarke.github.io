@@ -1,0 +1,111 @@
+---
+layout: page
+title: Cloud Storage Cost Calculator for Archiving Data
+description: Find the cheapest cloud storage Provider for archiving Documents +10 years.
+head: >
+  <script src="/assets/js/storage-cloud-calculator.js" defer></script>
+  <script src="/assets/js/vendor/8.0.7_filesize.min.js" defer></script>
+  <script src="/assets/js/vendor/3.10.2_alpinejs.min.js" defer></script>
+  <style>
+    #user-input label {
+      display: block;
+      margin-top: 5px;
+    }
+    #user-input input {
+      width: 200px;
+    }
+
+    .result {
+      display: inline-block;
+      width: 100px;
+      text-align: center;
+      margin: 10px;
+    }
+
+    .result img,
+    .result div {
+      margin-top: 10px;
+    }
+
+    .name {
+      height: 40px;
+    }
+
+    .bar {
+      display: inline-block;
+      width: 100px;
+    }
+  </style>
+---
+
+
+
+<div x-data="storageApp">
+  <div>
+    <h1>Price Calculator for Archiving Data</h1>
+    <p id="user-input">
+      <label for="duration">Storage Duration</label>
+      <input id="duration" type="range" min="1" max="10" x-model="input.storageDurationYears" />
+      <span x-text="input.storageDurationYears + (input.storageDurationYears*1 === 1 ? ' year' : ' years')"></span>
+
+      <label for="storage">Storage Amount</label>
+      <input type="range" min="0" max="10000" step="1" id="storage" x-model="input.storageGb" />
+      <span x-text="formatGb(input.storageGb)"></span>
+
+      <label for="filesize">Average Filesize</label>
+      <input type="range" min="0.001" max="1" step="0.001" id="filesize" x-model="input.filesizeInGb" />
+      <span x-text="formatGb(input.filesizeInGb)"></span>
+
+      <label for="download">How many Times do you need to Recover the Data</label>
+      <input type="range" min="0" max="10" step="1" id="download" x-model="input.recovers" />
+      <span x-text="input.recovers"></span>
+    </p>
+    <p>
+      How much does it cost to save <b
+        x-text="formatCompact(Math.ceil(input.storageGb / input.filesizeInGb)) + ' files'"></b>
+      totaling <b x-text="formatGb(input.storageGb)"></b> for
+      <b x-text="input.storageDurationYears + (input.storageDurationYears*1 === 1 ? ' year' : ' years')"></b>
+      and <b x-text="'recovering them ' + (input.recovers === '1' ? 'once' : input.recovers + ' times')"></b>?
+    </p>
+  </div>
+
+  <h2>Price Comparison between Cloud Storage Providers</h2>
+  <div>
+    <template x-for="result in results">
+      <div class="result">
+        <div x-text="formatPriceUnprecise(result.costs.total)"></div>
+        <div class="bar" :style="`height: ${result.costs.total / 100}px; background: ${result.offer.color}`">
+        </div>
+        <div class="name" x-text="result.offer.name"></div>
+        <img :src="'/assets/images/cloud-providers/'+ result.offer.image" :alt="result.offer.altText" height="40" />
+        <div>
+          <button :disabled="resultToDisplay === result.offer.key"
+            @click="resultToDisplay = result.offer.key; $refs.calculation.scrollIntoView({block: 'start', behavior: 'smooth'});">Show
+            Calculation</button>
+        </div>
+      </div>
+    </template>
+  </div>
+
+
+  <div>
+    <h2 x-ref="calculation">Price Calculation</h2>
+    <p>
+      <template x-if="resultShown">
+        <div x-html="resultShown.costs.calculationHTML"></div>
+      </template>
+      <template x-if="!resultShown">
+        <div>
+          <i>Pleace select an Offer above to show the calculation. </i><br><br>
+
+          <strong>Upload Cost: $0</strong><br><br>
+
+          <strong>Storage Cost: $0</strong><br><br>
+
+          <strong>Retrival Cost: $0</strong>
+        </div>
+      </template>
+    </p>
+  </div>
+
+</div>

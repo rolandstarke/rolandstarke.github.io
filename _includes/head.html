@@ -2,13 +2,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% if page.layout == "post" %}
-  {%- seo -%}
+  {% seo title=false %}
   {% else %}
-    <link rel="canonical" href="{{ page.url | absolute_url }}" />
-    <title>{{ page.title }}</title>
-    {% if page.description %}
-      <meta name="description" content="{{ page.description }}" />
-    {% endif %}
+  <link rel="canonical" href="{{ page.url | absolute_url }}" />
+  {% if page.description %}
+  <meta name="description" content="{{ page.description }}" />
+  {% endif %}
+  {% endif %}
+  {% if page.title %}
+  <title>{{ page.title }}</title>
   {% endif %}
 
   {{ page.head }}
